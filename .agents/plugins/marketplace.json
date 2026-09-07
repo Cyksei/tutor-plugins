@@ -1,0 +1,20 @@
+{
+  "name": "tutor-plugins",
+  "interface": {
+    "displayName": "Tutor Plugins"
+  },
+  "plugins": [
+    {
+      "name": "textbook-tutor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/textbook-tutor"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
