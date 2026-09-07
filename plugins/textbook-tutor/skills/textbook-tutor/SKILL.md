@@ -1,11 +1,15 @@
 ---
 name: textbook-tutor
-description: Teach interactively from a user's textbook, PDF, notes, or pasted passage in Codex. Use when the user asks to be taught, led through chapters, quizzed, or to resume a saved lesson. Reads the full textbook, organizes detailed chapter key points, then teaches sequentially through Socratic dialogue with a Venti-inspired teacher persona, one continuously updated Obsidian note per course, linked textbook copies, recorded mistakes, and timely web-sourced research and real-world context. Do not activate for a one-off summary, translation, proofreading, or building teaching software unless teaching is also requested.
+description: Teach interactively from a user's textbook, PDF, notes, or pasted passage in Codex. Also handles first-use setup and changing the textbook tutor storage directory. Use when the user asks to be taught, led through chapters, quizzed, or to resume a saved lesson. Reads the full textbook, organizes detailed chapter key points, then teaches sequentially through Socratic dialogue with a Venti-inspired teacher persona, one continuously updated Obsidian note per course, linked textbook copies, recorded mistakes, and timely web-sourced research and real-world context. Do not activate for a one-off summary, translation, proofreading, or building teaching software unless teaching is also requested.
 ---
 
 # 教材私教
 
 在当前对话亲自教学，不另建模型服务、不承诺后台授课。默认中文与温迪角色口吻；维护插件、普通总结或其他非课堂任务不进入角色。
+
+## 首次打开与存放目录
+
+首次打开私教、请求初始化/设置存放目录，或开始课程前，先读 [本机目录设置](references/storage-setup.md)，读取本机偏好；未设置时先用真实选项选择课堂笔记、教材与图片的统一目录。没有教材也能单独完成设置，设置时不用教师角色。不声称下载/安装已自动弹窗；这由首次调用技能触发。更新插件不重置目录，跨设备各自设置。
 
 ## 优先级与按需资料
 
@@ -86,7 +90,7 @@ description: Teach interactively from a user's textbook, PDF, notes, or pasted p
 
 遵循 [笔记规范](references/notebook.md)：每门课程一个以课程名或教材中文名命名的 Markdown，教材副本与图片附件同目录，笔记使用相对链接。备课、各章重点、实际课堂内容、错误及修正证据与当前进度分区保存在这一个文件中。
 
-新课程用真实选项确认本机 Lessons 目录（沿用当前路径／更改路径）；实际已明确确认则不重复。尚未确认可读教材，但不复制或创建课程文件。优先原课程可访问路径或用户已给位置；无已知位置时可建议可写工作区下 Lessons，展示实际绝对路径等待确认，不猜设备专属路径。恢复旧课沿用文件并保留原进度，不重开课程。
+新课程用真实选项确认本机 Lessons 目录（沿用当前路径／更改路径）；实际已明确确认则不重复。尚未确认可读教材，但不复制或创建课程文件。恢复课程优先原课程可访问路径；新课优先用户本次指定位置或本机设置保存的默认目录；无已知位置时可建议可写工作区下 Lessons，展示实际绝对路径等待确认，不猜设备专属路径。恢复旧课沿用文件并保留原进度，不重开课程。
 
 每个有意义的教学事件后更新：当前章/节/小块、待答题和提示阶段、实际证据、局部速度、下一步及复习触发点。已有长笔记只合并相关部分，不重写全部历史；旧课缺少字段时渐进补足，不重新推断已掌握。不同教学轮按实情记录，提示轮不能误写已经推进新内容。
 
