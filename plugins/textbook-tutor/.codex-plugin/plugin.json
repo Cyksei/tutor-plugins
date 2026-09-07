@@ -1,6 +1,6 @@
 {
   "name": "textbook-tutor",
-  "version": "0.1.0+codex.20260907145242",
+  "version": "0.1.0+codex.20260907150707",
   "description": "\u901a\u8bfb\u6559\u6750\u5e76\u6574\u7406\u5404\u7ae0\u91cd\u70b9\uff0c\u4ee5\u82cf\u683c\u62c9\u5e95\u5f0f\u5bf9\u8bdd\u4f9d\u6b21\u6559\u5b66\uff0c\u4e3a\u6bcf\u95e8\u8bfe\u7a0b\u4fdd\u5b58\u8bfe\u5802\u7b14\u8bb0\u548c\u9519\u7b54\u7ea0\u6b63\u8bb0\u5f55\u3002",
   "author": {
     "name": "Cyksei"
