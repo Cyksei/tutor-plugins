@@ -1,7 +1,5 @@
 # 教材私教 · Textbook Tutor
 
-![图标](plugins/textbook-tutor/assets/icon-cap-centered.png)
-
 用于 Codex 的中文教材私教插件。通读教材并整理章节路线，采用温迪风格的角色教学、苏格拉底式提问和轻量知识冒险。
 
 ## 安装
