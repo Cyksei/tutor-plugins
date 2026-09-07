@@ -1,0 +1,4 @@
+interface:
+  display_name: "教材私教"
+  short_description: "先通读备课，再逐章苏格拉底式教学，为每门课程保存课堂笔记和错题记录"
+  default_prompt: "用 $textbook-tutor 先通读并整理教材，逐章进行苏格拉底式教学，为这门课创建课堂笔记，记录课堂要点和错答纠正过程。"
