@@ -1,0 +1,79 @@
+<div id="tutor-classroom">
+  <h2 data-field="title"></h2>
+  <p data-field="position"></p>
+  <div class="viz-controls">
+    <label class="form-label">学习速度
+      <select class="form-select" data-control="pace"><option value="">选择速度</option><option value="慢慢细学">慢慢细学</option><option value="标准">标准</option><option value="快速">快速</option></select>
+    </label>
+    <button class="btn" data-action="pace">应用速度</button>
+    <button class="btn" data-action="save">保存当前课堂</button>
+    <button class="btn" data-action="resume">继续已保存进度</button>
+  </div>
+  <details data-area="content"><summary>当前讲解</summary><p data-field="content" style="white-space:pre-wrap"></p></details>
+  <section data-area="question">
+    <h3>轮到你了</h3>
+    <p data-field="question" style="white-space:pre-wrap"></p>
+    <p data-field="hint" style="white-space:pre-wrap"></p>
+    <div data-area="options"></div>
+    <label class="form-label">你的回答或理由<textarea class="form-control" data-control="answer" rows="3"></textarea></label>
+    <div class="viz-row"><button class="btn btn-primary" data-action="answer">提交回答</button><button class="btn" data-action="hint">给我一个提示</button></div>
+  </section>
+  <div class="viz-controls">
+    <label class="form-label">章节<select class="form-select" data-control="chapter"><option value="">选择章节</option></select></label>
+    <button class="btn" data-action="chapter">查看本章</button>
+    <button class="btn" data-action="image">查看当前配图</button>
+  </div>
+  <p role="status" aria-live="polite" data-field="status"></p>
+  <textarea class="form-control" data-control="fallback" aria-label="可复制的课堂请求" rows="4" hidden readonly></textarea>
+</div>
+<script>
+(() => {
+ const data = __TUTOR_DATA__;
+ const root = document.getElementById('tutor-classroom');
+ const field = name => root.querySelector('[data-field="'+name+'"]');
+ const control = name => root.querySelector('[data-control="'+name+'"]');
+ const state = data.state || {};
+ const text = value => typeof value === 'string' ? value : JSON.stringify(value ?? '');
+ field('title').textContent = data.title;
+ field('position').textContent = text(state.position || '尚无课堂快照') + ' · ' + (data.updated_at ? '最近保存 '+data.updated_at : '旧课程待读取');
+ field('content').textContent = text(state.current_content || '尚未保存本段讲解，请先继续课程。');
+ field('question').textContent = text(state.pending_question || '当前没有待答题。');
+ field('hint').textContent = (state.hints_given || []).map(text).join('\n');
+ root.querySelector('[data-area="question"]').hidden = !state.pending_question;
+ (state.question_options || []).forEach((option, i) => {
+   const label=document.createElement('label'); label.className='form-check';
+   const input=document.createElement('input'); input.type='radio'; input.name='tutor-answer'; input.value=String(i); input.className='form-check-input';
+   const span=document.createElement('span'); span.className='form-check-label'; span.textContent=typeof option==='string'?option:text(option.text || option.label || option);
+   label.append(input,span);root.querySelector('[data-area="options"]').append(label);
+ });
+ (data.chapter_headings || []).forEach(title=>{const option=document.createElement('option');option.value=title;option.textContent=title;control('chapter').append(option);});
+ const requests={
+   pace:()=> {if(!control('pace').value)throw Error('先选择学习速度。');return {action:'set_pace',pace:control('pace').value};},
+   save:()=>({action:'save_current_lesson'}),
+   resume:()=>({action:'resume_lesson'}),
+   image:()=>({action:'show_current_figure'}),
+   chapter:()=>{if(!control('chapter').value)throw Error('先选择章节。');return {action:'inspect_chapter',chapter:control('chapter').value};},
+   hint:()=>({action:'request_hint',question:state.pending_question}),
+   answer:()=>{
+     const selected=root.querySelector('input[name="tutor-answer"]:checked');
+     const answer=control('answer').value.trim();
+     if(!selected && !answer)throw Error('请选择选项或填写回答。');
+     return {action:'submit_answer',question:state.pending_question,selected_index:selected?Number(selected.value):null,selected_option:selected?(state.question_options || [])[Number(selected.value)]:null,answer};
+   }
+ };
+ root.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',async()=>{
+   let prompt;
+   try {
+     const action=requests[button.dataset.action]();
+     prompt='教材私教课堂操作：\n'+JSON.stringify({note:data.note,expected_sha256:data.note_sha256,...action})+'\n请先读取最新课堂状态；若问题或版本已变化，请显示最新课堂，不把旧答案用于新题。按实际请求执行，保存后再报告成功。';
+     if(!window.openai?.sendFollowUpMessage)throw Error('当前显示环境不能发送课堂操作，可复制下面的请求到 Codex。');
+     button.disabled=true;
+     await window.openai.sendFollowUpMessage({prompt,title:'课堂操作'});
+     field('status').textContent='请在对话中查看处理结果；如未发送，请重新点击。';
+   } catch(error) {
+     field('status').textContent=error.message || String(error);
+     if(prompt){control('fallback').value=prompt;control('fallback').hidden=false;}
+   } finally {button.disabled=false;}
+ }));
+})();
+</script>
