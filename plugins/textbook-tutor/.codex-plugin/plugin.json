@@ -1,19 +1,19 @@
 {
   "name": "textbook-tutor",
-  "version": "0.1.0",
-  "description": "通读教材并整理各章重点，以苏格拉底式对话依次教学，为每门课程保存课堂笔记和错答纠正记录。",
+  "version": "0.1.0+codex.20260907145242",
+  "description": "\u901a\u8bfb\u6559\u6750\u5e76\u6574\u7406\u5404\u7ae0\u91cd\u70b9\uff0c\u4ee5\u82cf\u683c\u62c9\u5e95\u5f0f\u5bf9\u8bdd\u4f9d\u6b21\u6559\u5b66\uff0c\u4e3a\u6bcf\u95e8\u8bfe\u7a0b\u4fdd\u5b58\u8bfe\u5802\u7b14\u8bb0\u548c\u9519\u7b54\u7ea0\u6b63\u8bb0\u5f55\u3002",
   "author": {
     "name": "Cyksei"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "教材私教",
-    "shortDescription": "通读备课，逐章启发，记录课堂要点与错题。",
-    "longDescription": "以温迪角色口吻亲自带课的私教先通读教材、整理各章重点，再逐章结合讲解与苏格拉底式提问：将新内容与提问放在同一轮，回答归纳后自动讲下一个知识点并提出新问题，主动结合最新研究和现实案例并注明来源与日期。每门新课用选项确认 Lessons 路径，将教材保存并链接；单一中文课程笔记持续记录章节重点、课堂内容、错答纠正、联网补充和进度。 学生可点击选择标准、快速或慢慢细学，随时局部切换；熟悉内容快速检查，不熟悉内容分步细讲，并保存课程速度偏好。 默认根据回答正确性、推理和提示依赖自动调节教学速度，熟练处加快、理解障碍处拆小补讲，学生可随时覆盖或固定节奏。 温迪式的轻快诗意、善意俏皮和小动作贯穿课堂；知识、推理、证据与判错保持严肃准确，首次答错先提示，重答仍错再讲解。 课堂默认采用轻量知识冒险：章节目标、小关卡、合理的选择后果与章末任务，保持每点讲解配题、先提示后讲解和基于实际表现的自动调速，不用积分惩罚或冗长剧情干扰学习。 讲到教材配图时展示原图；需要时使用网络图片或生成示意图辅助理解，逐图注明来源、教材位置或生成性质，并在课程笔记保留引用。",
+    "displayName": "\u6559\u6750\u79c1\u6559",
+    "shortDescription": "\u901a\u8bfb\u5907\u8bfe\uff0c\u9010\u7ae0\u542f\u53d1\uff0c\u8bb0\u5f55\u8bfe\u5802\u8981\u70b9\u4e0e\u9519\u9898\u3002",
+    "longDescription": "\u6e29\u8fea\u98ce\u683c\u7684\u6559\u6750\u79c1\u6559\uff1a\u5148\u901a\u8bfb\u5907\u8bfe\u3001\u6574\u7406\u5168\u4e66\u4e0e\u7ae0\u8282\u4efb\u52a1\uff0c\u518d\u6309\u5b66\u751f\u5b9e\u9645\u7406\u89e3\u9010\u70b9\u6559\u5b66\u3002\u9996\u6b21\u7b54\u9519\u5148\u63d0\u793a\uff0c\u4ecd\u9519\u518d\u8bb2\u89e3\uff1b\u72ec\u7acb\u638c\u63e1\u5904\u7b80\u8bb2\u5e76\u63d0\u9ad8\u95ee\u9898\u4ef7\u503c\uff0c\u56f0\u96be\u5904\u62c6\u5c0f\u8865\u8bb2\u3002\u901a\u8fc7\u6559\u6750\u539f\u56fe\u3001\u60c5\u5883\u9009\u62e9\u3001\u5b9a\u5411\u590d\u4e60\u548c\u7ae0\u672b\u7efc\u5408\u6311\u6218\u5efa\u7acb\u7406\u89e3\uff0c\u6bcf\u95e8\u8bfe\u4f7f\u7528\u4e00\u4e2a\u6301\u7eed\u66f4\u65b0\u7684 Obsidian \u7b14\u8bb0\uff0c\u8bb0\u5f55\u6765\u6e90\u3001\u8fdb\u5ea6\u3001\u9519\u7b54\u4e0e\u5b66\u4e60\u8bc1\u636e\u3002",
     "developerName": "Cyksei",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "用教材私教带我学习：先确认本课程 Lessons 路径，保存教材并创建中文命名的单一课程笔记，通读整理后逐章苏格拉底式教学，持续更新笔记和错题。",
+    "defaultPrompt": "\u7528\u6559\u6750\u79c1\u6559\u5e26\u6211\u5b66\u4e60\uff1a\u5148\u786e\u8ba4\u672c\u8bfe\u7a0b Lessons \u8def\u5f84\uff0c\u4fdd\u5b58\u6559\u6750\u5e76\u521b\u5efa\u4e2d\u6587\u547d\u540d\u7684\u5355\u4e00\u8bfe\u7a0b\u7b14\u8bb0\uff0c\u901a\u8bfb\u6574\u7406\u540e\u9010\u7ae0\u82cf\u683c\u62c9\u5e95\u5f0f\u6559\u5b66\uff0c\u6301\u7eed\u66f4\u65b0\u7b14\u8bb0\u548c\u9519\u9898\u3002",
     "composerIcon": "./assets/icon-cap-centered.png",
     "logo": "./assets/icon-cap-centered.png",
     "logoDark": "./assets/icon-cap-centered.png",
