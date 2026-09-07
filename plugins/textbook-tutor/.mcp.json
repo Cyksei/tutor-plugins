@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tutor_courses": {
+      "command": "/bin/sh",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/tools/launch.sh"
+      ],
+      "startup_timeout_sec": 20
+    }
+  }
+}
