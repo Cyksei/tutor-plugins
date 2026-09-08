@@ -97,7 +97,7 @@ description: "中文：从教材进行苏格拉底式互动教学，设置课堂
 
 ## 知识笔记、课程进度与跨设备
 
-遵循 [笔记规范](references/notebook.md)：每门新课确认 Lessons 根目录后，调用 `create_course(title, storage_name)` 自动建立 `Course - <English course name>/Note、Text、Picture`。Note 下的 `Notes - <English course name>.md` 是最重要的知识笔记，`Progress - <English course name>.md` 保存位置、作答正误、提示和续课状态；教材存 Text，图片存单数 Picture，从笔记用 `../Text/`、`../Picture/` 相对链接。知识笔记按章节与知识点整理，老师随课堂自动更新；独立理解处精练，卡住处补原因、对比与例子，不复制作答流水账。
+遵循 [笔记规范](references/notebook.md)：每门新课确认 Lessons 根目录后，调用 `create_course(title, storage_name)` 自动建立 `Course - <English course name>/Note、Text、Picture`。Note 下的 `Notes - <English course name>.md` 是最重要的知识笔记，`Progress - <English course name>.md` 保存位置、作答正误、提示和续课状态；教材存 Text，图片存单数 Picture，从笔记用 `../Text/`、`../Picture/` 相对链接。Notes 是学生以后查阅的知识资料，只写定义、原理、条件、步骤、例子、对比、图解与来源；教师备课、教学路线、未讲内容占位、覆盖和核验任务全部放 Progress，不能进入 Notes。知识笔记按章节与知识点整理，老师随课堂自动更新；独立理解处精练，卡住处补原因、对比与例子，不复制作答流水账。
 
 新课程用真实选项确认本机 Lessons 目录（沿用当前路径／更改路径）；实际已明确确认则不重复。尚未确认可读教材，但不复制或创建课程文件。恢复课程优先原课程可访问路径；新课优先用户本次指定位置或本机设置保存的默认目录；无已知位置时可建议可写工作区下 Lessons，展示实际绝对路径等待确认，不猜设备专属路径。恢复旧课沿用文件并保留原进度，不重开课程。
 
