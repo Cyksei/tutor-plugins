@@ -12,6 +12,8 @@ import fcntl
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from course_layout import append_section, progress, headings
 from teaching_policy import decide, validate_transition
+import course_notes
+from course_notes import split_course, read_knowledge, update_knowledge, create_course
 
 START = '<!-- textbook-tutor-state:v1\n'
 END = '\ntextbook-tutor-state:end -->'
@@ -58,11 +60,11 @@ def unpack(text):
 
 
 def read_course(note):
-    path = locate(note, '.md')
+    path, notebook = course_notes.resolve(sys.modules[__name__], note)
     raw = path.read_bytes()
     text = raw.decode('utf-8')
     data = unpack(text)
-    return {'note': str(path), 'note_sha256': digest(raw), **{k: v for k, v in data.items() if k != 'events'}, 'recent_events': dict(list(data['events'].items())[-20:]),
+    return {'note': str(path), 'note_sha256': digest(raw), **course_notes.status(sys.modules[__name__], notebook, data['revision']), **{k: v for k, v in data.items() if k != 'events'}, 'recent_events': dict(list(data['events'].items())[-20:]),
             'needs_initial_state': data['revision'] == 0,
             'note_excerpt': text[:18000] if data['revision'] == 0 else None}
 
@@ -114,7 +116,9 @@ def record_event(note, expected_sha256, event_id, event, state, note_entry, sect
     if 'current_content' in state and not isinstance(state.get('current_content'), str):
         raise ValueError('current_content must be text')
 
-    path = locate(note, '.md')
+    path, notebook = course_notes.resolve(sys.modules[__name__], note)
+    if notebook is None:
+        raise ValueError('SPLIT_REQUIRED: curate existing knowledge with split_course before saving new events')
     # A local advisory lock coordinates separate Codex tasks, independent of inode replacement.
     lockdir = Path(tempfile.gettempdir()) / 'textbook-tutor-locks'
     lockdir.mkdir(mode=0o700, exist_ok=True)
@@ -142,7 +146,7 @@ def record_event(note, expected_sha256, event_id, event, state, note_entry, sect
         data['state'] = state
         data['events'][event_id] = {**event, 'payload': payload, 'at': timestamp}
         data['updated_at'] = timestamp
-        section_path = section_path or state.get('section_path') or ['章节重点与课堂笔记', str(state['position']), '课堂记录']
+        section_path = ['课堂事件记录', str(state['position'])]
         if not isinstance(section_path, list) or not 1 <= len(section_path) <= 5:
             raise ValueError('Provide an exact section_path')
         if note_entry.strip():
@@ -182,19 +186,21 @@ def record_event(note, expected_sha256, event_id, event, state, note_entry, sect
         after = path.read_bytes()
         if after != text.encode('utf-8'):
             raise ValueError('POST_WRITE_CONFLICT: reload note before any retry')
-        return {'saved': True, 'duplicate': False, 'revision': data['revision'], 'note_sha256': digest(after), 'teaching_decision': {k: v for k, v in decision.items() if k != 'learning'}}
+        return {'saved': True, 'duplicate': False, 'revision': data['revision'], 'note_sha256': digest(after), 'teaching_decision': {k: v for k, v in decision.items() if k != 'learning'}, **course_notes.status(sys.modules[__name__], notebook, data['revision'])}
 
 
 def list_courses():
     courses, warnings = [], []
-    for path in root().glob('*.md'):
+    for path in root().rglob('*.md'):
         try:
             path = locate(str(path), '.md')
             text = path.read_text()
+            if course_notes.metadata(text):
+                continue
             if START not in text and 'course_id:' not in text[:3000]:
                 continue
             data = unpack(text)
-            courses.append({'note': str(path), 'title': path.stem, 'updated_at': data.get('updated_at'),
+            courses.append({'note': str(path), 'title': data.get('course_title') or path.stem.removesuffix('-课程进度').removeprefix('进度：'), 'updated_at': data.get('updated_at'),
                             'position': data['state'].get('position'), 'has_checkpoint': data['revision'] > 0})
         except (ValueError, OSError) as exc:
             warnings.append({'note': path.name, 'error': str(exc)})
@@ -210,7 +216,7 @@ def resume_course(note=None):
             return {'needs_selection_or_legacy_read': True, **inventory}
         note = saved[0]['note']
     result = read_course(note)
-    text = locate(note, '.md').read_text()
+    text = locate(result.get('knowledge_note', result['note']), '.md').read_text()
     result['chapter_headings'] = [r[3] for r in headings(text) if r[2] in (2, 3)]
     result['resume_instruction'] = 'Resume the saved pending question and actual hint stage. Do not mark unanswered work correct or restart the chapter.'
     return result
@@ -290,18 +296,22 @@ def definition(name, description, properties, required, readonly=True):
             'annotations': {'readOnlyHint': readonly, 'destructiveHint': False, 'idempotentHint': True, 'openWorldHint': False}}
 
 TOOLS = [
+    definition('create_course', 'After the student confirms the Lessons root for this new course, create 课程：title/Note, Text and Picture with paired 笔记：title.md and 进度：title.md in Note. Returns exact paths. Existing folders are never overwritten; inspect them to resume after an uncertain retry. Does not copy textbooks or start teaching.', {'title': STRING}, ['title'], False),
+    definition('split_course', 'Separate one confirmed course into a curated knowledge notebook at its original path and a sibling -课程进度.md holding the complete legacy record. Read all relevant legacy knowledge and preserve personal notes before providing knowledge_text. Safe retry; never bulk migrate.', {'note': STRING, 'expected_sha256': STRING, 'knowledge_text': STRING}, ['note', 'expected_sha256', 'knowledge_text'], False),
+    definition('read_knowledge', 'Read the separate knowledge notebook and hash for targeted curation. No writes.', {'note': STRING}, ['note']),
+    definition('update_knowledge', 'After record_event, curate knowledge at stable concept IDs from actual teaching and evidence. Upsert explanations, conditions, examples and sources; do not append transcript or reveal pending solutions. Empty sections acknowledge a hints/control-only turn with no safe knowledge changes. Progress and knowledge saves are separate; retry pending updates before advancing.', {'note': STRING, 'expected_sha256': STRING, 'progress_revision': {'type': 'integer'}, 'update_id': STRING, 'sections': {'type': 'array', 'items': {'type': 'object', 'properties': {'id': STRING, 'section_path': {'type': 'array', 'items': STRING}, 'content': STRING}, 'required': ['id', 'section_path', 'content'], 'additionalProperties': False}}}, ['note', 'expected_sha256', 'progress_revision', 'update_id', 'sections'], False),
     definition('plan_teaching_turn', 'Before replying, check an actual answer/control against the saved question. Returns allowed teaching action and concept-local pace advice. Does not grade facts or save; record_event rechecks.', {'note': STRING, 'expected_sha256': STRING, 'event': {'type': 'object'}}, ['note', 'expected_sha256', 'event']),
     definition('list_courses', 'List saved courses in the chosen directory; no writes.', {}, []),
     definition('resume_course', 'Resume a specific course or the most recently saved checkpoint across Codex tasks. Legacy courses require evidence-based reading.', {'note': STRING}, []),
     definition('save_checkpoint', 'Explicitly save the exact current lesson, question, options, hints, sources and progress for another Codex task.', {'note': STRING, 'expected_sha256': STRING, 'event_id': STRING, 'state': {'type': 'object'}}, ['note','expected_sha256','event_id','state'], False),
     definition('classroom_panel', 'Create a Codex inline classroom panel from the saved state. Answers, pace and save controls request a follow-up through the Codex host.', {'note': STRING}, ['note'], False),
     definition('read_course', 'Read current course state and note hash before teaching or saving. Paths stay inside the configured Lessons folder.', {'note': STRING}, ['note']),
-    definition('record_event', 'Save an actual learning event and full current state atomically in the existing course note. Preserve handwritten content. Never store an unanswered question solution. Reuse the same event_id and payload on retry.',
+    definition('record_event', 'Save an actual learning event and full current state atomically in the separate progress file; never writes knowledge notes. Follow with update_knowledge. Preserve handwritten content. Never store an unanswered question solution. Reuse the same event_id and payload on retry.',
                {'note': STRING, 'expected_sha256': STRING, 'event_id': STRING,
                 'event': {'type': 'object', 'description': 'Actual outcome and evidence; outcome: taught/unanswered/independent_correct/hinted_correct/incorrect/explained/skipped/preference/resume'},
                 'state': {'type': 'object', 'description': 'Full snapshot: position, pending_question, hint_stage (none/awaiting_answer/hint_given/explained_awaiting_check), pace, next_step, review_points'},
-                'section_path': {'type': 'array', 'items': STRING, 'description': 'Exact heading path for this lesson, e.g. 章节重点与课堂笔记 / 第 2 章 化学 / 课堂记录'},
-                'note_entry': {'type': 'string', 'description': 'Human-readable actual lesson notes, evidence and current position; no pending answer spoilers'}},
+                'section_path': {'type': 'array', 'items': STRING, 'description': 'Legacy compatibility only; logs always route into 课堂事件记录 / position. Knowledge uses update_knowledge.'},
+                'note_entry': {'type': 'string', 'description': 'Progress log: actual answers, outcomes, hints and current position; no pending answer spoilers'}},
                ['note', 'expected_sha256', 'event_id', 'event', 'state', 'note_entry'], False),
     definition('textbook', 'Read/search a bounded PDF page range or return an embedded image inline. Page numbers are 1-based PDF pages. No OCR or complete-figure guarantee; inspect the returned image.',
                {'file': STRING, 'action': {'type': 'string', 'enum': ['info', 'read', 'search', 'image']}, 'page': {'type': 'integer', 'minimum': 1},
@@ -326,7 +336,7 @@ def serve():
             elif method == 'tools/call':
                 params = request['params']
                 try:
-                    functions = {'plan_teaching_turn': plan_teaching_turn, 'read_course': read_course, 'record_event': record_event, 'textbook': textbook, 'list_courses': list_courses, 'resume_course': resume_course, 'save_checkpoint': save_checkpoint, 'classroom_panel': classroom_panel}
+                    functions = {'create_course': create_course, 'split_course': split_course, 'read_knowledge': read_knowledge, 'update_knowledge': update_knowledge, 'plan_teaching_turn': plan_teaching_turn, 'read_course': read_course, 'record_event': record_event, 'textbook': textbook, 'list_courses': list_courses, 'resume_course': resume_course, 'save_checkpoint': save_checkpoint, 'classroom_panel': classroom_panel}
                     value = functions[params['name']](**params.get('arguments', {}))
                     result = value if 'content' in value else {'content': [{'type': 'text', 'text': json.dumps(value, ensure_ascii=False)}]}
                 except Exception as exc:
