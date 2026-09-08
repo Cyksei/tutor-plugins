@@ -25,7 +25,7 @@
 
 ## 新课程文件夹
 
-每门新课确认 Lessons 根目录后调用 `create_course(title)`，使用课程中文名，不传路径或前缀。一次创建课程：名称/Note、Text、Picture，以及 Note 下的笔记：名称.md 和进度：名称.md。将教材复制到返回的 text_dir，图片保存到 picture_dir，笔记链接用 ../Text/ 与 ../Picture/。工具不替你复制教材或证明已通读。COURSE_EXISTS 时检查现有课程并续用，不能覆盖；新课已配对，不需 split_course。
+每门新课确认 Lessons 根目录后调用 `create_course(title, storage_name)`，title 保留学生使用的课程名称，storage_name 使用对应的简洁英文课程名，不传路径或前缀。一次创建Course - <English course name>/Note、Text、Picture，以及 Note 下的Notes - <English course name>.md 和Progress - <English course name>.md。将教材复制到返回的 text_dir，图片保存到 picture_dir，笔记链接用 ../Text/ 与 ../Picture/。工具不替你复制教材或证明已通读。COURSE_EXISTS 时检查现有课程并续用，不能覆盖；新课已配对，不需 split_course。
 
 ## 两个文件的自动更新
 

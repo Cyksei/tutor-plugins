@@ -27,4 +27,4 @@
 
 ## 两类课程文件
 
-所选目录是所有课程的根目录，不是某门课的 Note 文件夹。每门新课通过 create_course 在根目录下创建 课程：课程名/Note、Text、Picture；两个 Markdown 放 Note，教材放 Text，图片放单数 Picture。新课确认一次目录即可，不为两份文件重复询问。跨设备续课需同步这两个 Markdown 及教材附件；已有课程子目录沿用原位置。
+所选目录是所有课程的根目录，不是某门课的 Note 文件夹。每门新课通过 create_course 在根目录下创建 Course - <English course name>/Note、Text、Picture；两个 Markdown 放 Note，教材放 Text，图片放单数 Picture。新课确认一次目录即可，不为两份文件重复询问。跨设备续课需同步这两个 Markdown 及教材附件；已有课程子目录沿用原位置。

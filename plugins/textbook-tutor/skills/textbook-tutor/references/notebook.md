@@ -1,15 +1,17 @@
 # 课程进度与知识笔记分开保存
 
-每门新课在已确认的 Lessons 根目录下，由 `create_course(title)` 自动创建：
+每门新课在已确认的 Lessons 根目录下，由 `create_course(title, storage_name)` 自动创建：
 
 ```text
-课程：<课程中文名>/
+Course - <English course name>/
 ├── Note/
-│   ├── 笔记：<课程中文名>.md
-│   └── 进度：<课程中文名>.md
+│   ├── Notes - <English course name>.md
+│   └── Progress - <English course name>.md
 ├── Text/
 └── Picture/
 ```
+
+目录和文件名使用英文，title/笔记正文仍可保留中文。新课提供明确英文 storage_name；附件也用英文名称（教材已有英文名保留，图片如 Anatomy and Physiology - Figure 10.4.png）。不因展示语言变化重建既有课程；旧中文文件名仍兼容。
 
 Note 中的知识笔记最重要，供学生理解和复习；进度记录保存位置、真实作答、正误、提示和续课证据。Text 保存教材 PDF 及其他课程原始资料，Picture 保存已核验的教学图片。必须使用单数 `Picture`，不要另建 Pictures 或把附件散放 Lessons 顶层。同一课按科目集中，不按日期另起课程文件夹。
 
@@ -23,7 +25,7 @@ Note 中的知识笔记最重要，供学生理解和复习；进度记录保存
 
 知识笔记使用课程名或教材中文名，保留原标题、作者、版次、年份、目标与来源位置。从 Note 内的 Markdown 使用 `../Text/<教材文件名>` 和 `../Picture/<图片文件名>` 相对链接（空格等必要时编码）；保留原件，复制后核对文件身份/哈希，不覆盖同名其他教材。来源版本变化需重新核查阅读覆盖。已有附件目录继续使用，核对相对链接可解析。
 
-新课调用 `create_course(title)` 一次建立完整目录及配对文件，再补真实信息和教材链接；不需要再次 split_course。旧课才用 split_course；不要给未读教材预填重点。未知字段如实标记未知。
+新课调用 `create_course(title, storage_name)` 一次建立完整目录及配对文件，再补真实信息和教材链接；不需要再次 split_course。旧课才用 split_course；不要给未读教材预填重点。未知字段如实标记未知。
 
 ## 知识笔记：组织知识，不复述课堂流水账
 
