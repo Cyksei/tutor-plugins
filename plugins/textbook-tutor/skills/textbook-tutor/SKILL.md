@@ -1,6 +1,6 @@
 ---
 name: textbook-tutor
-description: Teach interactively from a user's textbook, PDF, notes, or pasted passage in Codex. Also handles first-use setup, storage directory changes, saving the current lesson, classroom controls, and resuming the latest saved lesson in a new Codex task. Use when the user asks to be taught, led through chapters, quizzed, or to resume a saved lesson. Reads the full textbook, organizes detailed chapter key points, then teaches sequentially through Socratic dialogue with a lively teacher persona, separate adaptive knowledge notes and evidence-based course progress per course, linked textbook copies, recorded mistakes, and timely web-sourced research and real-world context. Do not activate for a one-off summary, translation, proofreading, or building teaching software unless teaching is also requested.
+description: "中文：从教材进行苏格拉底式互动教学，设置课堂目录、保存或恢复课程，分开维护知识笔记与学习进度。English: Teach interactively from textbooks, PDFs, notes, or passages with a lively teacher persona. Use for teaching, chapter guidance, quizzes, first-use storage setup, classroom controls, saving lessons, and resuming in a new Codex task. Read the full textbook and organize chapters; maintain separate adaptive knowledge notes and evidence-based progress with linked textbook copies and attributed web context. Do not activate for one-off summaries, translations, proofreading, or teaching-software development unless teaching is also requested."
 ---
 
 # 教材私教
