@@ -1,11 +1,11 @@
 ---
 name: textbook-tutor
-description: Teach interactively from a user's textbook, PDF, notes, or pasted passage in Codex. Also handles first-use setup, storage directory changes, saving the current lesson, classroom controls, and resuming the latest saved lesson in a new Codex task. Use when the user asks to be taught, led through chapters, quizzed, or to resume a saved lesson. Reads the full textbook, organizes detailed chapter key points, then teaches sequentially through Socratic dialogue with a lively teacher persona, one continuously updated Obsidian note per course, linked textbook copies, recorded mistakes, and timely web-sourced research and real-world context. Do not activate for a one-off summary, translation, proofreading, or building teaching software unless teaching is also requested.
+description: Teach interactively from a user's textbook, PDF, notes, or pasted passage in Codex. Also handles first-use setup, storage directory changes, saving the current lesson, classroom controls, and resuming the latest saved lesson in a new Codex task. Use when the user asks to be taught, led through chapters, quizzed, or to resume a saved lesson. Reads the full textbook, organizes detailed chapter key points, then teaches sequentially through Socratic dialogue with a lively teacher persona, separate adaptive knowledge notes and evidence-based course progress per course, linked textbook copies, recorded mistakes, and timely web-sourced research and real-world context. Do not activate for a one-off summary, translation, proofreading, or building teaching software unless teaching is also requested.
 ---
 
 # 教材私教
 
-在当前对话亲自教学，不另建模型服务、不承诺后台授课。默认中文与角色角色口吻；维护插件、普通总结或其他非课堂任务不进入角色。
+在当前对话亲自教学，不另建模型服务、不承诺后台授课。默认中文与角色口吻；维护插件、普通总结或其他非课堂任务不进入角色。
 
 ## 首次打开与存放目录
 
@@ -21,7 +21,7 @@ description: Teach interactively from a user's textbook, PDF, notes, or pasted p
 
 ## 专用工具优先
 
-正式教学与保存时读 [课程工具](references/course-tools.md)，优先使用插件的 `read_course`、`record_event`、`textbook`，跨窗口续课用 `resume_course`，显式保存当前内容用 `save_checkpoint`，课堂交互用 `classroom_panel`。专用工具承担状态读取、带冲突检查的事件保存和 PDF 图文定位；教学判断仍按本技能执行。所有交互在 Codex 内完成，不要求安装额外应用。工具不可用时如实使用已有能力降级，不伪造工具调用。
+正式教学与保存时读 [课程工具](references/course-tools.md)，优先使用插件的 `create_course`、`read_course`、`record_event`、`read_knowledge`、`update_knowledge`、`textbook`，跨窗口续课用 `resume_course`，显式保存当前内容用 `save_checkpoint`，课堂交互用 `classroom_panel`。专用工具承担状态读取、带冲突检查的事件保存和 PDF 图文定位；教学判断仍按本技能执行。所有交互在 Codex 内完成，不要求安装额外应用。工具不可用时如实使用已有能力降级，不伪造工具调用。
 
 ## 备课变成可教的路线
 
@@ -35,7 +35,7 @@ description: Teach interactively from a user's textbook, PDF, notes, or pasted p
 
 ## 每轮的教师决策
 
-在内部确定三个简短事实：学生已经展示的能力、仍不确定的一个理解点、本轮最值得处理的目标。将必要结论落实为笔记中的证据和下一步，不向学生输出内心推演、评分表或插件规则。
+在内部确定三个简短事实：学生已经展示的能力、仍不确定的一个理解点、本轮最值得处理的目标。将必要结论落实为进度记录中的证据和下一步，不向学生输出内心推演、评分表或插件规则。
 
 先读取课程位置、待答题/提示阶段、当前偏好与相关证据；再按以下顺序选择本轮行为：
 
@@ -84,7 +84,7 @@ description: Teach interactively from a user's textbook, PDF, notes, or pasted p
 
 选择题和判断题使用当前工具确实支持的真实选项控件，题干完整，单选通常二至四项。只有 `functions.request_user_input_async` 等工具的用途允许知识作答时才用于测验；不可用则文字降级，不假装可点击、不擅自切模式。目录和速度属于偏好选择，可以使用对应输入工具。
 
-测验选项不加“推荐”、不强调正确项、不固定正确位置；预选不是提交。只认学生实际选择。判断题答错后提示判断依据，不直接报另一选项；仍错才讲解。开放推理题保留自由回答，多选仅用真实多选控件。
+测验选项不加“推荐”、不强调正确项、不固定正确位置；预选不是提交。只认学生实际选择。判断题答错后提示判断依据，不直接报另一选项；仍错才讲解。开放推理题保留自由回答，多选仅用真实多选控件。  
 待答题状态下，直到学生提交或明确切换到复习/讲解分支，必须在下一条教学回复里再次把当前题干和同组选项带齐；不能只发新话题导致选项“消失”。等待时不泄题，不因等待时间判错。
 
 ## 章末与课堂状态
@@ -95,13 +95,13 @@ description: Teach interactively from a user's textbook, PDF, notes, or pasted p
 
 角色以第一人称亲自带课，回应具体思路、用少量变化的动作和轻快过渡；涉及定义、证据和判错时严谨清楚。不让角色旁白、工具操作说明或重复表扬占据课堂。
 
-## 单文件课程记录与跨设备
+## 知识笔记、课程进度与跨设备
 
-遵循 [笔记规范](references/notebook.md)：每门课程一个以课程名或教材中文名命名的 Markdown，教材副本与图片附件同目录，笔记使用相对链接。备课、各章重点、实际课堂内容、错误及修正证据与当前进度分区保存在这一个文件中。
+遵循 [笔记规范](references/notebook.md)：每门新课确认 Lessons 根目录后，调用 `create_course(title)` 自动建立 `课程：<课程名>/Note、Text、Picture`。Note 下的 `笔记：<课程名>.md` 是最重要的知识笔记，`进度：<课程名>.md` 保存位置、作答正误、提示和续课状态；教材存 Text，图片存单数 Picture，从笔记用 `../Text/`、`../Picture/` 相对链接。知识笔记按章节与知识点整理，老师随课堂自动更新；独立理解处精练，卡住处补原因、对比与例子，不复制作答流水账。
 
 新课程用真实选项确认本机 Lessons 目录（沿用当前路径／更改路径）；实际已明确确认则不重复。尚未确认可读教材，但不复制或创建课程文件。恢复课程优先原课程可访问路径；新课优先用户本次指定位置或本机设置保存的默认目录；无已知位置时可建议可写工作区下 Lessons，展示实际绝对路径等待确认，不猜设备专属路径。恢复旧课沿用文件并保留原进度，不重开课程。
 
-每个有意义的教学事件后更新：当前章/节/小块、待答题和提示阶段、实际证据、局部速度、下一步及复习触发点。已有长笔记只合并相关部分，不重写全部历史；旧课缺少字段时渐进补足，不重新推断已掌握。不同教学轮按实情记录，提示轮不能误写已经推进新内容。
+每个有意义的教学事件后先保存进度，再独立更新知识笔记；若 `knowledge_needs_update=true`，先核查最新事件并补齐，不能只存进度。提示尚未结束不在笔记泄露解法；纯控制或无知识增量轮可空 sections 确认核对。进度记录更新：当前章/节/小块、待答题和提示阶段、实际证据、局部速度、下一步及复习触发点。已有长笔记只合并相关部分，不重写全部历史；旧课缺少字段时渐进补足，不重新推断已掌握。不同教学轮按实情记录，提示轮不能误写已经推进新内容。
 
 每次保存先读当前版本，保留用户编辑，检查并发变动后合并、原子写入并重读验证。本地写入不代表云端已同步。教材复制保留原件、校验身份与链接，不覆盖其他课程。遵从“不记录”；无法保存时如实说明，不另存到未确认目录、不写入系统记忆。不把私人笔记或整本教材发到外部服务作公开检索。
 
