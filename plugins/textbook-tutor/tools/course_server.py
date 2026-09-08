@@ -200,7 +200,7 @@ def list_courses():
             if START not in text and 'course_id:' not in text[:3000]:
                 continue
             data = unpack(text)
-            courses.append({'note': str(path), 'title': data.get('course_title') or path.stem.removesuffix('-课程进度').removeprefix('进度：'), 'updated_at': data.get('updated_at'),
+            courses.append({'note': str(path), 'title': data.get('course_title') or path.stem.removesuffix('-课程进度').removeprefix('进度：').removeprefix('Progress - '), 'updated_at': data.get('updated_at'),
                             'position': data['state'].get('position'), 'has_checkpoint': data['revision'] > 0})
         except (ValueError, OSError) as exc:
             warnings.append({'note': path.name, 'error': str(exc)})
@@ -296,7 +296,7 @@ def definition(name, description, properties, required, readonly=True):
             'annotations': {'readOnlyHint': readonly, 'destructiveHint': False, 'idempotentHint': True, 'openWorldHint': False}}
 
 TOOLS = [
-    definition('create_course', 'After the student confirms the Lessons root for this new course, create 课程：title/Note, Text and Picture with paired 笔记：title.md and 进度：title.md in Note. Returns exact paths. Existing folders are never overwritten; inspect them to resume after an uncertain retry. Does not copy textbooks or start teaching.', {'title': STRING}, ['title'], False),
+    definition('create_course', 'After the student confirms the Lessons root for this new course, create Course - storage_name/Note, Text and Picture with paired Notes - storage_name.md and Progress - storage_name.md in Note. Use an English storage_name for filenames; title may stay in the learner’s language. Returns exact paths. Existing folders are never overwritten; inspect them to resume after an uncertain retry. Does not copy textbooks or start teaching.', {'title': STRING, 'storage_name': STRING}, ['title'], False),
     definition('split_course', 'Separate one confirmed course into a curated knowledge notebook at its original path and a sibling -课程进度.md holding the complete legacy record. Read all relevant legacy knowledge and preserve personal notes before providing knowledge_text. Safe retry; never bulk migrate.', {'note': STRING, 'expected_sha256': STRING, 'knowledge_text': STRING}, ['note', 'expected_sha256', 'knowledge_text'], False),
     definition('read_knowledge', 'Read the separate knowledge notebook and hash for targeted curation. No writes.', {'note': STRING}, ['note']),
     definition('update_knowledge', 'After record_event, curate knowledge at stable concept IDs from actual teaching and evidence. Upsert explanations, conditions, examples and sources; do not append transcript or reveal pending solutions. Empty sections acknowledge a hints/control-only turn with no safe knowledge changes. Progress and knowledge saves are separate; retry pending updates before advancing.', {'note': STRING, 'expected_sha256': STRING, 'progress_revision': {'type': 'integer'}, 'update_id': STRING, 'sections': {'type': 'array', 'items': {'type': 'object', 'properties': {'id': STRING, 'section_path': {'type': 'array', 'items': STRING}, 'content': STRING}, 'required': ['id', 'section_path', 'content'], 'additionalProperties': False}}}, ['note', 'expected_sha256', 'progress_revision', 'update_id', 'sections'], False),

@@ -65,6 +65,13 @@ def resolve(server, note):
             raise ValueError('Invalid progress link')
         return progress, path
     # The conventional sibling is accepted only with a reciprocal link.
+    if path.stem.startswith('Progress - '):
+        candidate = path.with_name('Notes - ' + path.stem[len('Progress - '):] + '.md')
+        if candidate.is_file():
+            candidate = server.locate(str(candidate), '.md')
+            meta = metadata(candidate.read_text())
+            if meta and server.locate(str(candidate.parent / meta['progress']), '.md') == path:
+                return path, candidate
     if path.stem.startswith('进度：'):
         candidate = path.with_name('笔记：' + path.stem[len('进度：'):] + '.md')
         if candidate.is_file():
@@ -105,6 +112,8 @@ def split_course(note, expected_sha256, knowledge_text):
             raise ValueError('CONFLICT: reread legacy course before splitting')
         data = server.unpack(raw.decode())
         progress = path.with_name(('进度：' + path.stem[len('笔记：'):] if path.stem.startswith('笔记：') else path.stem + '-课程进度') + '.md')
+        if path.stem.startswith('Notes - '):
+            progress = path.with_name('Progress - ' + path.stem[len('Notes - '):] + '.md')
         if progress.is_symlink():
             raise ValueError('CONFLICT: progress destination is a symbolic link')
         # Exclusive creation, with recovery for interruption between copy and replacement.
@@ -185,15 +194,18 @@ def update_knowledge(note, expected_sha256, progress_revision, update_id, sectio
         return {'saved': True, 'duplicate': False, **status(server, notebook, revision)}
 
 
-def create_course(title):
+def create_course(title, storage_name=None):
     """Create a complete course folder only after the Lessons directory is confirmed."""
     import course_server as server
     import shutil
     import uuid
     if not isinstance(title, str) or not title.strip() or title != title.strip() or len(title) > 100 or any(c in title for c in '/\\<>:"|?*') or any(ord(c) < 32 for c in title) or title in ('.', '..') or title.endswith('.'):
         raise ValueError('Use a plain course title without path separators or reserved filename characters')
+    storage_name = title if storage_name is None else storage_name
+    if not isinstance(storage_name, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9 ._()-]{0,99}', storage_name) or storage_name.endswith((' ', '.')):
+        raise ValueError('Provide an English storage_name using letters, numbers, spaces, hyphens, underscores or parentheses')
     base = server.root()
-    target = base / ('课程：' + title)
+    target = base / ('Course - ' + storage_name)
     with locked(base, server.digest):
         if target.exists() or target.is_symlink():
             raise ValueError('COURSE_EXISTS: inspect and resume the existing folder; never overwrite or create a duplicate course')
@@ -201,8 +213,8 @@ def create_course(title):
         try:
             for name in ('Note', 'Text', 'Picture'):
                 (stage / name).mkdir()
-            knowledge = '笔记：' + title + '.md'
-            progress = '进度：' + title + '.md'
+            knowledge = 'Notes - ' + storage_name + '.md'
+            progress = 'Progress - ' + storage_name + '.md'
             data = {'revision': 0, 'state': {}, 'events': {}, 'course_title': title, 'course_id': str(uuid.uuid4())}
             (stage/'Note'/progress).write_text('# ' + title + ' · 课程进度\n\n[课堂知识笔记](' + quote(knowledge) + ')\n\n尚未授课；备课未开始。\n\n' + server.START + json.dumps(data,ensure_ascii=False).replace('-->', '\\u002d\\u002d>') + server.END + '\n')
             meta = {'progress': progress, 'revision': 0, 'updates': {}}
