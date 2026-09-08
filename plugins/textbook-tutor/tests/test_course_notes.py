@@ -119,25 +119,38 @@ class NotesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'inside'): server.read_course(str(self.note))
 
     def test_create_course_layout_and_pair_round_trip(self):
-        result = server.create_course('测试新课')
-        folder = self.base/'课程：测试新课'
+        result = server.create_course('测试新课', 'Test Course')
+        folder = self.base/'Course - Test Course'
         self.assertEqual({p.name for p in folder.iterdir()}, {'Note','Text','Picture'})
-        self.assertEqual({p.name for p in (folder/'Note').iterdir()}, {'笔记：测试新课.md','进度：测试新课.md'})
+        self.assertEqual({p.name for p in (folder/'Note').iterdir()}, {'Notes - Test Course.md','Progress - Test Course.md'})
         self.assertEqual(server.read_course(result['note'])['knowledge_note'], result['knowledge_note'])
         self.assertFalse(result['needs_split'])
         self.assertIn('测试新课', [c['title'] for c in server.list_courses()['courses']])
-        with self.assertRaisesRegex(ValueError, 'COURSE_EXISTS'): server.create_course('测试新课')
+        with self.assertRaisesRegex(ValueError, 'COURSE_EXISTS'): server.create_course('测试新课', 'Test Course')
         self.assertEqual(len(list(folder.rglob('*.md'))), 2)
 
     def test_create_course_rejects_path_escape(self):
         for title in ['../outside', '/tmp/a', '', 'a/b', 'a\\b']:
             with self.assertRaises(ValueError): server.create_course(title)
-        self.assertFalse(list(self.base.glob('课程：*')))
+        self.assertFalse(list(self.base.glob('Course - *')))
 
     def test_named_legacy_note_splits_to_progress_prefix(self):
         path=self.base/'笔记：原课程.md';path.write_bytes(self.raw)
         result=server.split_course(str(path),server.read_course(str(path))['note_sha256'],'# 原课程\n保留知识')
         self.assertEqual(Path(result['note']).name, '进度：原课程.md')
         self.assertEqual(server.read_course(result['note'])['knowledge_note'],str(path.resolve()))
+
+    def test_english_storage_name_required_for_non_english_title(self):
+        with self.assertRaisesRegex(ValueError, 'English storage_name'):
+            server.create_course('中文课程')
+        created=server.create_course('中文课程', 'English Course')
+        self.assertIn('Course - English Course',created['course_dir'])
+        self.assertEqual(server.read_course(created['note'])['course_title'],'中文课程')
+
+    def test_english_note_migration_and_reverse_lookup(self):
+        p=self.base/'Notes - Anatomy and Physiology.md';p.write_bytes(self.raw)
+        r=server.split_course(str(p),server.read_course(str(p))['note_sha256'],'# Anatomy and Physiology')
+        self.assertEqual(Path(r['note']).name,'Progress - Anatomy and Physiology.md')
+        self.assertEqual(server.read_course(r['note'])['knowledge_note'],str(p.resolve()))
 
 if __name__=='__main__': unittest.main()
