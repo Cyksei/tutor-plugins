@@ -218,7 +218,7 @@ def create_course(title, storage_name=None):
             data = {'revision': 0, 'state': {}, 'events': {}, 'course_title': title, 'course_id': str(uuid.uuid4())}
             (stage/'Note'/progress).write_text('# ' + title + ' · 课程进度\n\n[课堂知识笔记](' + quote(knowledge) + ')\n\n尚未授课；备课未开始。\n\n' + server.START + json.dumps(data,ensure_ascii=False).replace('-->', '\\u002d\\u002d>') + server.END + '\n')
             meta = {'progress': progress, 'revision': 0, 'updates': {}}
-            (stage/'Note'/knowledge).write_text('# ' + title + '\n\n## 教材与课程信息\n\n尚未导入教材。\n\n## 全书概览\n\n待实际备课后整理。\n\n[课程进度记录](' + quote(progress) + ')\n\n' + marker(meta) + '\n')
+            (stage/'Note'/knowledge).write_text('# ' + title + '\n\n## 教材与参考来源\n\n## 知识笔记\n\n[课程进度记录](' + quote(progress) + ')\n\n' + marker(meta) + '\n')
             os.rename(stage, target)
         finally:
             if stage.exists(): shutil.rmtree(stage)
