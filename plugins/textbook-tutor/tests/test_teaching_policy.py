@@ -20,6 +20,7 @@ class LessonTests(unittest.TestCase):
         os.environ['TUTOR_SETTINGS_FILE'] = str(config)
         self.addCleanup(lambda: os.environ.pop('TUTOR_SETTINGS_FILE', None) if previous is None else os.environ.__setitem__('TUTOR_SETTINGS_FILE', previous))
         (self.base / '课程.md').write_text('# 课程\n\n手工笔记不丢失。\n')
+        server.split_course('课程.md', server.read_course('课程.md')['note_sha256'], '# 课程\n\n手工笔记不丢失。\n')
         self.counter = 0
         self.state = dict(position='1.1', pending_question='结构与功能有什么联系？', question_options=['甲','乙'], hints_given=[], sources=[], hint_stage='awaiting_answer', pace={'default':'standard','auto_adjust':True}, next_step='等待回答', review_points=[], current_content='结构影响功能', section_path=['章节重点与课堂笔记','第一章','课堂记录'])
         self.save({'outcome':'taught'}, self.state)
@@ -37,10 +38,10 @@ class LessonTests(unittest.TestCase):
         return {**self.state, 'pending_question':'换一个情境如何应用？', 'position':'1.2'}
 
     def test_first_error_blocks_advance_without_writing(self):
-        old=(self.base/'课程.md').read_bytes()
+        old=(self.base/'课程-课程进度.md').read_bytes()
         with self.assertRaisesRegex(ValueError,'WAIT_REQUIRED'):
             self.save(self.answer(), self.next_state())
-        self.assertEqual(old,(self.base/'课程.md').read_bytes())
+        self.assertEqual(old,(self.base/'课程-课程进度.md').read_bytes())
 
     def test_hint_resume_and_hinted_success(self):
         event=self.answer()
@@ -118,6 +119,7 @@ class LessonTests(unittest.TestCase):
 
     def test_legacy_checkpoint_does_not_invent_evidence(self):
         (self.base/'旧课.md').write_text('# 旧课\n已讲第一节，尚无作答记录。\n')
+        server.split_course('旧课.md',server.read_course('旧课.md')['note_sha256'],'# 旧课\n已讲第一节，尚无作答记录。')
         old=server.read_course('旧课.md')
         server.save_checkpoint('旧课.md',old['note_sha256'],'migrate',self.state.copy())
         self.assertEqual(server.resume_course('旧课.md')['learning']['concepts'],{})
