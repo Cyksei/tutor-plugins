@@ -57,13 +57,15 @@ codex plugin add textbook-finder@tutor-plugins
 
 ```text
 Lessons/
-└── 课程：课程名/
+└── Course - <English course name>/
     ├── Note/
-    │   ├── 笔记：课程名.md
-    │   └── 进度：课程名.md
+    │   ├── Notes - <English course name>.md
+    │   └── Progress - <English course name>.md
     ├── Text/
     └── Picture/
 ```
+
+新课使用英文目录和文件名，课程标题和笔记正文仍可使用中文；已有中文文件名保持兼容。
 
 教材存 Text，教学图片存单数 Picture，Note 内的笔记通过相对链接引用附件。进度与知识分别保存；如果知识更新失败，续课时会提示补齐，不重复登记学生作答。尚在提示阶段时，不在知识笔记提前泄露待答题解法。
 

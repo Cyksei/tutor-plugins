@@ -57,15 +57,15 @@ After confirming the root directory, each new course is created automatically. E
 
 ```text
 Lessons/
-└── 课程：<course name>/
+└── Course - <English course name>/
     ├── Note/
-    │   ├── 笔记：<course name>.md
-    │   └── 进度：<course name>.md
+    │   ├── Notes - <English course name>.md
+    │   └── Progress - <English course name>.md
     ├── Text/
     └── Picture/
 ```
 
-The Chinese prefixes mean “Course,” “Notes,” and “Progress”; they reflect the plugin’s actual folder and file naming convention. Textbooks go in Text, teaching images in the singular Picture directory, and Markdown notes link to attachments using relative paths. Progress and knowledge are saved separately. If a knowledge update fails, the saved status flags it for completion when resuming, without recording the student’s answer twice. Notes must not reveal a pending question’s solution while the student is still working through hints.
+New courses use English folder and file names. The course title and lesson content may remain in the learner’s language. Existing Chinese filenames remain supported. Textbooks go in Text, teaching images in the singular Picture directory, and Markdown notes link to attachments using relative paths. Progress and knowledge are saved separately. If a knowledge update fails, the saved status flags it for completion when resuming, without recording the student’s answer twice. Notes must not reveal a pending question’s solution while the student is still working through hints.
 
 ## Requirements and Limitations
 
