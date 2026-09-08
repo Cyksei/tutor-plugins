@@ -1,6 +1,6 @@
 ---
 name: textbook-finder
-description: Independently search the web for downloadable textbook PDFs from reputable official sources using a user's topic, description, or keywords. Verify full PDF availability, edition and publication year, and rank suitable textbooks newest first. Use for finding textbooks, course books, or educational PDF materials, and downloading a selected result when requested. Does not start tutoring, initialize a course, or require a classroom-notes directory.
+description: "中文：独立按主题、内容描述或关键词查找正规来源的可下载教材 PDF，核验完整性、版次和年份，优先新版；不自动开课。English: Independently search the web for downloadable textbook PDFs from reputable official sources using a topic, description, or keywords. Verify full PDF availability, edition, and publication year; rank suitable textbooks newest first. Use for finding textbooks, course books, or educational PDF materials and downloading selected results when requested. Does not start tutoring, initialize a course, or require a classroom-notes directory."
 ---
 
 # 教材查找
