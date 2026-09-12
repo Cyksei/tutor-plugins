@@ -1,6 +1,6 @@
 {
   "name": "textbook-tutor",
-  "version": "0.1.0+codex.20260908135525",
+  "version": "0.1.0+codex.20260912102422",
   "description": "\u4e2d\u6587\uff1a\u901a\u8bfb\u6559\u6750\uff0c\u6309\u7ae0\u8282\u8fdb\u884c\u82cf\u683c\u62c9\u5e95\u5f0f\u89d2\u8272\u6559\u5b66\uff0c\u5206\u522b\u4fdd\u5b58\u8bfe\u7a0b\u8fdb\u5ea6\u4e0e\u81ea\u9002\u5e94\u77e5\u8bc6\u7b14\u8bb0\u3002\nEnglish: Learn chapter by chapter through Socratic dialogue and character roleplay, with separate progress records and adaptive knowledge notes.",
   "author": {
     "name": "Cyksei"
