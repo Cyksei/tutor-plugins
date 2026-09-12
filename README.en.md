@@ -42,7 +42,7 @@ Invoke `$textbook-tutor` with a textbook, or ask to resume a saved course.
 - Offer a hint after an initial mistake, then explain if more help is needed. Support direct explanations, skipping, and a fixed pace.
 - Use `plan_teaching_turn` to check the next teaching action, and validate the pending question and hint stage again when saving.
 - Record actual evidence per concept, distinguish independent from assisted answers, and suggest local pace adjustments and review.
-- Display textbook images and add web context where useful, with sources identified.
+- Display textbook images and add web context where useful, with sources identified. Keep the image preview visible and link the caption beneath it to the same local image file for Codex file preview. Do not open the sidebar automatically or wrap the preview itself in a link. Remote images without a local file link to their source page instead; preview placement depends on the Codex client.
 - Keep knowledge notes separate from progress records. Curate Notes as long-term student reference material: definitions, principles, conditions, procedures, examples, comparisons, diagrams, and sources. Keep familiar material concise and difficult material more detailed. Store teacher preparation, lesson plans, unread coverage, unlearned chapter placeholders, answers, outcomes, and hints in Progress only.
 - Automatically create course folders with Note, Text, and Picture categories. Preserve legacy records when reorganizing an existing course.
 - Use `save_checkpoint` / `resume_course` to save and restore current content, pending questions, options, and hints.
