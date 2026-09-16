@@ -17,7 +17,7 @@
 
 首次答错用 incorrect，工具返回 hint_then_wait；state 保持 position、pending_question、question_options，hint_stage=hint_given，并在 hints_given 末尾追加实际提示。提示后仍错仍用 incorrect，返回 explain，讲清后保存同一 position、hint_stage=explained_awaiting_check；可设置一个新的短变式 pending_question，清理旧题提示与选项。变式独立完成可以用 independent_correct；原题看过解释后的重复回答用 hinted_correct/support=explained。解释本身不能记成已掌握。
 
-结果正确且足以继续时按支持程度记录 correct，返回 advance；本轮进入下一小块并保存新待答题，hint_stage=awaiting_answer、hints_given=[]。最终收尾或没有新题时 pending_question=null、hint_stage=none。正确但关键依据不明时先用 unanswered 做一次定向澄清，保留原题和阶段；不要把没有依据硬记成错答。
+结果正确且足以继续时按支持程度记录 correct，返回 advance；本轮进入下一小块并保存新待答题，hint_stage=awaiting_answer、hints_given=[]。最终收尾或没有新题时 pending_question=null、hint_stage=none。按原题要求判定是否足以继续：命名、选择、判断、排序或数值题未要求解释时，正确短答就是有效作答，不能仅因没有理由改用 unanswered 或追加追问。只有实际回答存在影响正确性/下一步的具体歧义或矛盾，或原题明确要求的关键推理未作答时，才用 unanswered 做一次定向澄清，保留原题和阶段；不要把没有自发解释硬记成错答。
 
 没有实际回答、自述“懂了”、答疑、暂停或仅切速度均不提交 assessment。正常等待用 unanswered，改速度用 preference。备课和首次讲解用 taught；已有待答题不能用 taught 偷跳，备课材料可以按原规范合并到笔记。
 
@@ -39,7 +39,7 @@
 
 learning.concepts 与学习事件在独立的课程进度 Markdown 原子保存；知识笔记另用 update_knowledge 整理，read_course/resume_course 自动返回。它由工具生成，不放进 state 或手工伪造；旧课第一次更新时从新证据渐进建立，不根据旧的“已讲”补造掌握。
 
-各概念保存最近 12 次实际评价、最近状态、连续独立实质作答次数及复习触发条件。历史完整事件仍保留在原文件。recognition 不算加速依据；提示后改正不算独立作答。当前默认同一概念连续 3 次有推理/应用等证据才建议快讲，错误或支持依赖建议局部拆小。不要为了凑次数增加练习。跨概念不继承加速结论。
+各概念保存最近 12 次实际评价、最近状态、连续独立实质作答次数及复习触发条件。历史完整事件仍保留在原文件。recognition 不算加速依据，但仍可作为有效正确作答推进课程；不为取得 reasoning 标签追问简单题理由。记忆证据来自实际的间隔回忆，不把刚读过答案的重复包装成长期记忆。提示后改正不算独立作答。当前默认同一概念连续 3 次有推理/应用等证据才建议快讲，错误或支持依赖建议局部拆小。不要为了凑次数增加练习。跨概念不继承加速结论。
 
 pace_advice 只是针对该 concept_id 的建议；尊重学生速度上下限与局部选择。pace 建议使用 {"default":"standard", "auto_adjust":true, "local":null}，固定速度用 auto_adjust=false；旧的字符串/其他偏好仍可读，不自动改写。模型决定具体例子、图示和支撑量。复习触发条件供下次相关应用/开课选题，不声称后台定时复习或精确记忆概率。
 
