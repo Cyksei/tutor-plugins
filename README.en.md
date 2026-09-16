@@ -39,6 +39,9 @@ Invoke `$textbook-tutor` with a textbook, or ask to resume a saved course.
 
 - Read the textbook, organize its overall structure and chapter key points, and teach chapter by chapter in small steps.
 - Explain one concept and ask one relevant question; give feedback and advance when appropriate.
+- Connect each new concept to the chapter framework. Questions focus on relationships, missing links, roles, and consequences, avoiding copy-back prompts and unnecessary requests for reasons.
+- Teach missing prerequisites first. For technical methods, use worked examples, partially completed steps, and independent practice as needed. Notes connect concepts, conditions, and examples; later reviews check actual recall.
+- Provide the current course’s knowledge-note file link when starting a lesson, resuming in another task, or returning after a pause, for manual opening.
 - Offer a hint after an initial mistake, then explain if more help is needed. Support direct explanations, skipping, and a fixed pace.
 - Use `plan_teaching_turn` to check the next teaching action, and validate the pending question and hint stage again when saving.
 - Record actual evidence per concept, distinguish independent from assisted answers, and suggest local pace adjustments and review.
